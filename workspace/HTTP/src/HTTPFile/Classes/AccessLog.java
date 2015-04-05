@@ -8,6 +8,8 @@ import java.util.Locale;
 public class AccessLog
 {
 
+	final String timestampPattern = "[dd/MMM/yyyy:HH:mm:ss Z]";
+	
     public Host getLocalHost()
     {
         return localHost;
@@ -18,22 +20,19 @@ public class AccessLog
         this.localHost =  new Host(localHost);
     }
 
-    public Date getTimeStamp()
+    public Date getTimestamp()
     {
-        return timeStamp;
+        return this.timestamp;
     }
 
-    public void setTimestamp(String timeStamp)
+    public void setTimestamp(String timestamp)
     {
-    	String timeStampPattern = "[dd/MMM/yyyy:HH:mm:ss Z]";
-    	        this.timeStamp = new SimpleDateFormat(timeStampPattern,
-    	        	Locale.US).parse(timeStamp, new ParsePosition(timeStamp.indexOf("[")));
-              
-    }
+    	 this.timestamp = new SimpleDateFormat(timestampPattern).parse(timestamp, new ParsePosition(timestamp.indexOf("[")));
+    }  
 
     public String getRequest()
     {
-        return request;
+        return this.request;
     }
 
     public void setRequest(String request)
@@ -43,7 +42,7 @@ public class AccessLog
 
     public int getReplyCode()
     {
-        return replyCode;
+        return this.replyCode;
     }
 
     public void setReplyCode(int replyCode)
@@ -53,7 +52,7 @@ public class AccessLog
 
     public int getReplyBytes()
     {
-        return replyBytes;
+        return this.replyBytes;
     }
 
     public void setReplyBytes(int replyBytes)
@@ -62,7 +61,7 @@ public class AccessLog
     }
 
     private Host localHost;
-    private Date timeStamp;
+    private Date timestamp;
     private String request;
     private int replyCode;
     private int replyBytes;
@@ -87,7 +86,7 @@ public class AccessLog
 	public String toString()
     {
     	return String.format("\n__________________________\n Host: " + getLocalHost() +
-    		"\n TimeStamp: " + getTimeStamp() + "\n Request: " + getRequest() + 
+    		"\n TimeStamp: " + getTimestamp() + "\n Request: " + getRequest() + 
     			"\n ReplyCode: " + getReplyCode() + "\n Bytes: " + getReplyBytes());
 
     }

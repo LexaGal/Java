@@ -4,12 +4,13 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 
 import HTTPFile.Interfaces.IWriter;
 
 public class Writer implements IWriter
 {
-    public void write(String fileName, String text) 
+    public <Type> void write(String fileName, List<Type> text) 
     {
         File file = new File(fileName);
 
@@ -27,8 +28,11 @@ public class Writer implements IWriter
 
             try
             {
-                out.append(text);
-            }
+        	   for(Type str : text)
+               {
+                   out.append('\n' + str.toString());
+               }
+        	}
             finally
             {
                 out.close();

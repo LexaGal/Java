@@ -17,8 +17,12 @@ public class ParserForLog implements IParserForLog
          buffer.setTimestamp(secondPart[2]);
          secondPart = buffers[2].split(" ");
          buffer.setReplyCode(Integer.parseInt(secondPart[1]));
-         buffer.setReplyBytes(Integer.parseInt(secondPart[2]));
- 
-		return buffer;
+         try {
+             buffer.setReplyBytes(Integer.parseInt(secondPart[2]));
+         }
+         catch (NumberFormatException ex) {
+             buffer.setReplyBytes(0);
+         }
+		 return buffer;
     }
 }

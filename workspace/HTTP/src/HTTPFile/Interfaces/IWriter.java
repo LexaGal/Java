@@ -1,6 +1,8 @@
 package HTTPFile.Interfaces;
 
+import java.util.List;
+
 public interface IWriter
 {
-    void write(String fileName, String text);
+    <Type> void write(String fileName, List<Type> text);
 }
