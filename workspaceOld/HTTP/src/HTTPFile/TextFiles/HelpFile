@@ -1,0 +1,145 @@
+//------------------------------------
+public class ReadWrite
+	{
+
+		public static void main(String[] args)
+		{
+			int nStr;
+			int n;
+
+			try
+			{
+			   FileInputStream fstream = new FileInputStream(args[2]);
+			   BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+			   String strLine;
+			   int start = 1;
+			   int number = 0;
+			   
+			   nStr = Integer.parseInt(args[0]);
+			   n = Integer.parseInt(args[1]);
+			   
+			   if (nStr < 0 || n < 0) throw new Exception();
+			   
+					   
+			   while ((strLine = br.readLine()) != null)
+			   {
+				   
+				   String host = null, time = null, request = null;
+				   int index = 0, reply = 0, bytes = 0, flag = 0;
+				   
+				   for (int i = 0; i < strLine.length(); i++)
+				   {
+									   
+					   if (strLine.toCharArray()[i] == '[')
+					   {
+					       host = strLine.substring(0, i - 5);
+					       index = i;
+					       continue;
+					   }
+					   
+					   if (strLine.toCharArray()[i] == ']') 
+					   {
+						   time = strLine.substring(index, i - 1);
+						   index = i;
+						   continue;
+					   }
+					   					   			   
+					   if (strLine.toCharArray()[i] == '\"') 
+					   {
+						   for (int j = index + 2; j < strLine.length(); j++)
+						   {
+							   if (strLine.toCharArray()[j] == '\"')
+							   {
+								   	request = strLine.substring(index + 2, index + 2 + j);
+								   	index = index + 2 + j + 1;
+								   	break;
+							   }
+						   }
+						   
+						   flag = 1;
+						   continue;
+					   }
+					   
+					   if (flag == 1 && strLine.toCharArray()[i] == ' ') 
+					   {
+						   reply = Integer.parseInt(strLine.substring(index, i));
+						   index = i + 1;
+						   continue;
+					   }
+					   
+					   if (flag == 1 && strLine.toCharArray()[i] == '\n') 
+					   {
+						   bytes = Integer.parseInt(strLine.substring(index, i));
+						   index = i;
+						   continue;
+					   }
+			 					  
+				   }   
+				   				  
+				   HTTPInfo httpInfo = new HTTPInfo(host, time, request, reply, bytes);
+				   
+				   //------------------------------------
+				  
+				   start ++;
+				   			   
+				   if (start > nStr)
+				   {
+					   if (number == n) break;
+					   
+					   System.out.println (strLine);
+				   	   
+				   	   number ++;
+				   }
+			   }
+			   br.close();
+			}
+				
+			catch (Exception e) 
+			{
+			     System.err.println("Error: " + e.getMessage());
+			}
+		}
+	}
+//--------------------------------------------
+
+int nStr;
+	int n;
+
+	try
+	{
+	   FileInputStream fstream = new FileInputStream(args[2]);
+	   BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+	   String strLine;
+	   int start = 1;
+	   int number = 0;
+	   
+	   nStr = Integer.parseInt(args[0]);
+	   n = Integer.parseInt(args[1]);
+	   
+	   if (nStr < 0 || n < 0) throw new Exception();
+	   
+			   
+	
+	   while ((strLine = br.readLine()) != null)
+	   {
+		   start ++;
+		   			   
+		   if (start > nStr)
+		   {
+			   if (number == n) break;
+		   
+
+		   	   System.out.println (strLine);
+		   	   
+		   	   number ++;
+		   }
+	   }
+	   br.close();
+	}
+		
+	catch (Exception e) 
+	{
+	     System.err.println("Error: " + e.getMessage());
+	}
+}
+//----------------------------------

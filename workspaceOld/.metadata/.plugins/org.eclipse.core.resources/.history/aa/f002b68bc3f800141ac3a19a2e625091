@@ -1,0 +1,192 @@
+package HTTPFile.Classes;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import HTTPFile.Interfaces.ILogSearcher;
+import HTTPFile.Interfaces.IReportCreator;
+import HTTPFile.Interfaces.IReporter;
+import HTTPFile.Interfaces.IWriter;
+
+public class Reporter implements IReporter, IReportCreator<ReportData, ReportResult> {
+
+    ILogSearcher logSearcher;
+    IWriter Writer;
+    List<AccessLog> Logs;
+
+    public Reporter(ILogSearcher logSearcher, IWriter Writer)
+    {
+        this.logSearcher = logSearcher;
+        this.Writer = Writer;
+    }
+    
+    private List<AccessLog> findByDate(int starterDate, int finalDate)
+    {
+
+        String pattern = "[dd/MMM/yyyy:HH:mm:ss Z]";
+        String sDate = "[" + starterDate + "/Jul/1995:00:00:00 -0400]";
+        String fDate = "[" + finalDate + "/Jul/1995:23:59:59 -0400]";
+
+        Date StarterDate = new SimpleDateFormat(pattern)
+                .parse(sDate, new ParsePosition(sDate.indexOf("[")));
+        Date FinalDate = new SimpleDateFormat(pattern)
+                .parse(fDate, new ParsePosition(fDate.indexOf("[")));
+
+        int starterIndex = logSearcher.binarySearch(StarterDate, Logs, 0, Logs.size());
+        int finalIndex = logSearcher.binarySearch(FinalDate, Logs, 0, Logs.size());
+
+        return Logs.subList(starterIndex, finalIndex);
+    }
+
+    @Override
+    public List<Entry<String, Integer>> MostOften(int starterData, int finalData, int amount, List<AccessLog> Logs, String ReportPath) throws IOException
+    {
+        this.Logs = Logs;
+
+        Map<String, Integer> Dict = new HashMap<String, Integer>();
+        for (AccessLog str : findByDate(starterData, finalData))
+        {
+            if (Dict.containsKey(str.getLocalHost().toString()))
+            {
+            	Dict.put(str.getLocalHost().toString(), Dict.get(str.getLocalHost().toString()) + 1);
+            }
+            else
+            {
+                Dict.put(str.getLocalHost().toString(), 1);
+            }
+        }
+
+        List<Entry<String, Integer>> list = new ArrayList<Entry<String, Integer>>(Dict.entrySet());
+        
+        Collections.sort(list, new Comparator<Map.Entry<String, Integer>>()
+        {
+            @Override
+            public int compare(Map.Entry<String, Integer> b, Map.Entry<String, Integer> a) 
+            {
+                return a.getValue().compareTo(b.getValue());
+            }
+        });
+        
+        int subListIndex = amount;
+        
+        if(list.size() < amount)
+        {
+        	subListIndex = list.size();
+        }
+
+        list = list.subList(0, subListIndex);
+        
+        File file = new File(ReportPath);
+        FileWriter fileWriter;
+        fileWriter = new FileWriter(file.getAbsoluteFile(), true);
+        BufferedWriter out;
+        out = new BufferedWriter(fileWriter);
+
+        try
+        {
+	        for(Entry<String, Integer> str : list)
+	        { 
+				Writer.write(out, String.format("% %",  str.getKey(), str.getValue().toString()));
+	        }	
+        }
+        catch (IOException e)
+        {
+        	throw new RuntimeException(e);
+        }
+              
+        return list;
+    }
+
+    @Override
+    public int SumAnswers(int starterDate, int finalDate, List<AccessLog> Logs, String ReportPath) throws IOException
+    {
+        this.Logs = Logs;
+        int TotalSum = 0;
+        
+        for(AccessLog str : findByDate(starterDate, finalDate))
+        {
+            TotalSum += str.getReplyBytes();
+        }
+        
+        File file = new File(ReportPath);
+        FileWriter fileWriter;
+        fileWriter = new FileWriter(file.getAbsoluteFile(), true);
+        BufferedWriter out;
+        out = new BufferedWriter(fileWriter);
+
+              
+        out.append("Total Bytes for answers: " + TotalSum);
+        out.close();
+        
+        return TotalSum;
+    }
+    
+    @Override
+    public int MaxBytesPerAnswer(int starterDate, int finalDate, List<AccessLog> Logs, String ReportPath) throws IOException
+    {
+        this.Logs = Logs;
+        int Max = 0;
+    
+        for(AccessLog str : findByDate(starterDate, finalDate))
+        {
+            if(str.getReplyBytes() > Max)
+            {
+            	Max = str.getReplyBytes();
+            }
+        }
+        
+        File file = new File(ReportPath);
+        FileWriter fileWriter;
+        fileWriter = new FileWriter(file.getAbsoluteFile(), true);
+        BufferedWriter out;
+        out = new BufferedWriter(fileWriter);
+
+        out.append("Max Answer: " + Max);
+        out.close();
+       
+        
+        return Max;
+    }
+    
+    @Override
+	public ReportResult<?> Create(ReportData reportData) throws IOException {
+	    
+    	switch (reportData.reportNumber) 
+        {
+            case 1:
+            {
+            	List<Entry<String, Integer>> list = MostOften(reportData.firstDate, reportData.lastDate, 5, reportData.Logs, reportData.reportPath);
+            	ReportResult<List<Entry<String, Integer>>> entryList = new ReportResult<List<Entry<String,Integer>>>(list);
+            	return entryList;
+            }
+            
+            case 2:
+            {
+                int integer = SumAnswers(reportData.firstDate, reportData.lastDate, reportData.Logs, reportData.reportPath);
+                ReportResult<Integer> sum = new ReportResult<Integer>(integer);
+                return sum;
+            }
+            case 3:
+            {
+                int integer = MaxBytesPerAnswer(reportData.firstDate, reportData.lastDate, reportData.Logs, reportData.reportPath);
+                ReportResult<Integer> max = new ReportResult<Integer>(integer);
+                return max;
+            }
+        }
+		return null;	
+
+    }
+}

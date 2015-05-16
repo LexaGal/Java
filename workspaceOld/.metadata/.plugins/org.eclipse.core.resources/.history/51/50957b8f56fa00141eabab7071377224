@@ -1,0 +1,11 @@
+package HTTPFile.Classes;
+
+public class AgrsData
+{
+     public String DataBasePath;
+     public String StarterPosition;
+     public String RowsAmount;
+     public String OutBasePath;
+     public String ReportPath;
+     public String ReportNumber;
+}

@@ -1,0 +1,24 @@
+package HTTPFile.Classes;
+
+import java.util.List;
+
+public class ReportData {
+	
+	public ReportData(int firstDate, int lastDate, int hostsNumber, List<AccessLog> Logs, String reportPath, int reportNumber)
+	{
+		this.firstDate = firstDate;
+		this.lastDate = lastDate;
+		this.hostsNumber = hostsNumber;
+		this.Logs = Logs;
+		this.reportPath = reportPath;
+		this.reportNumber = reportNumber;
+	}
+	
+	public int firstDate;
+	public int lastDate;
+	public int hostsNumber;
+	public int reportNumber;
+	public List<AccessLog> Logs;;
+	public String reportPath;
+
+}

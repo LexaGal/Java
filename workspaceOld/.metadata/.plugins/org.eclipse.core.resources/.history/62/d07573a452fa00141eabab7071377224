@@ -1,0 +1,63 @@
+package Threads;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.concurrent.BlockingQueue;
+
+import HTTPFile.Classes.AccessLog;
+import HTTPFile.Classes.Reader;
+import HTTPFile.Interfaces.IReader;
+
+public class Loader implements Runnable
+{
+		
+			private IReader reader;
+			private String path;
+			private int count = 0;
+			private int nLines;
+			private int startPos;
+			BufferedReader in = new BufferedReader(new FileReader(path));
+			BlockingQueue<String> queueLines;
+			BlockingQueue<AccessLog> queueLogs;
+			
+			Loader(String p, int n, int s, BlockingQueue<String> lines, BlockingQueue<AccessLog> logs) throws IOException
+			{
+				path = p;
+				nLines = n;
+				startPos = s;
+				in = new BufferedReader(new FileReader(path));
+				reader = new Reader(path);
+				queueLines = lines;
+				queueLogs = logs;
+			}
+						
+			public void run()
+			{
+				try {
+						String line;
+						
+						while (count >= 0 && (line = readLine()) != null) 
+						{
+							queueLines.put(line);
+						}
+						
+					} 
+					catch (InterruptedException ex)
+					{
+						ex.printStackTrace();
+					} 
+					catch (IOException e)
+					{
+						e.printStackTrace();
+					}
+			
+			}
+			
+			String readLine() throws IOException
+			{
+				--count;
+				return reader.GetString(in);
+			}
+}

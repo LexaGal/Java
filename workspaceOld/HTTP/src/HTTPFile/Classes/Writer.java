@@ -1,0 +1,21 @@
+package HTTPFile.Classes;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.List;
+
+import HTTPFile.Interfaces.IWriter;
+
+public class Writer implements IWriter
+{
+    public <Type> void write(BufferedWriter out, Type str) //throws IOException 
+    {
+          try {
+			out.append('\n' + str.toString());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}   
+    }
+}

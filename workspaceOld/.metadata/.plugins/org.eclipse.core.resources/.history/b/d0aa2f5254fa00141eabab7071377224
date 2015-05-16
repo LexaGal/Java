@@ -1,0 +1,67 @@
+package Threads;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.concurrent.BlockingQueue;
+
+import HTTPFile.Classes.AccessLog;
+import HTTPFile.Interfaces.IParserForLog;
+
+public class Parser implements Runnable
+	{
+			
+				private IParserForLog parser;
+				private String path;
+				private int count = 0;
+				private int nLines;
+				private int startPos;
+				BufferedReader in = new BufferedReader(new FileReader(path));
+				BlockingQueue<String> queueLines;
+				BlockingQueue<AccessLog> queueLogs;
+				
+				Parser(String p, int n, int s, BlockingQueue<String> lines, BlockingQueue<AccessLog> logs) throws IOException
+				{
+					path = p;
+					nLines = n;
+					startPos = s;
+					in = new BufferedReader(new FileReader(path));
+					queueLines = lines;
+					queueLogs = logs;
+				}
+							
+				public void run()
+				{
+					try {
+							String line;
+							
+							while (count < startPos)
+							{
+								count++;
+								readLine();
+							}
+							
+							while (count >= startPos && count <= (startPos + nLines) && (line = readLine()) != null) 
+							{
+								queueLines.put(line);
+								queueLogs.add(parser.getAccessLog(line));
+								count++;
+							}
+													
+						} 
+						catch (InterruptedException ex)
+						{
+							ex.printStackTrace();
+						} 
+						catch (IOException e)
+						{
+							e.printStackTrace();
+						}
+				
+				}
+				
+				String readLine() throws IOException
+				{
+					return in.readLine();
+				}
+	}

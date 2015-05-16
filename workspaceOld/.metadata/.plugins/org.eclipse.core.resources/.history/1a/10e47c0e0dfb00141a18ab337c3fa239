@@ -1,0 +1,79 @@
+package HTTPFile;
+
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+
+
+
+
+import HTTPFile.Classes.AccessLog;
+import HTTPFile.Classes.AgrsData;
+import HTTPFile.Classes.LogFileProcessor;
+import HTTPFile.Classes.LogSearcher;
+import HTTPFile.Classes.ParserForLog;
+import HTTPFile.Classes.ReportData;
+import HTTPFile.Classes.ReportResult;
+import HTTPFile.Classes.Reporter;
+import HTTPFile.Classes.Writer;
+import HTTPFile.Interfaces.ILogFileProcessor;
+import HTTPFile.Interfaces.ILogSearcher;
+import HTTPFile.Interfaces.IParserForLog;
+import HTTPFile.Interfaces.IWriter;
+import Threads.Loader;
+import Threads.Parser;
+
+public class Main
+{
+	
+	public static void main(String[] args) throws IOException, InterruptedException
+	{
+		
+	    IParserForLog parser = new ParserForLog();
+        IWriter writer = new Writer();
+        ILogSearcher logSearcher = new LogSearcher();
+        ILogFileProcessor processor = new LogFileProcessor(writer, parser, logSearcher);
+
+        AgrsData data = new AgrsData(args[0], Integer.parseInt(args[1]), Integer.parseInt(args[2]), args[3], args[4], Integer.parseInt(args[5])); 
+        
+        long before = System.currentTimeMillis();
+        
+        ReportData rd = processor.process(args[0], args[1], args[2], args[3], args[4], args[5]);
+        //Reporter reporter = new Reporter(logSearcher, writer);
+        //ReportResult<?> rr = reporter.Create(rd);
+        
+        long after = System.currentTimeMillis();
+ 		long time = (after - before);
+ 		         
+ 		System.out.println("time " + time);
+ 		
+        final BlockingQueue<String> queueLines = new ArrayBlockingQueue<>(100000);
+        final BlockingQueue<AccessLog> queueLogs = new ArrayBlockingQueue<>(100000);
+    
+     	before = System.currentTimeMillis();
+        
+		Thread threadLoader = new Thread(new Loader(data.DataBasePath, data.StarterPosition, data.RowsAmount, queueLines));
+ 		threadLoader.setName("Loader");
+   
+    	Thread threadParser = new Thread(new Parser(data.OutBasePath, data.RowsAmount, queueLines, queueLogs)); 
+		threadParser.setName("Parser");
+ 
+ 		threadLoader.start();
+ 		threadParser.start();
+ 		 
+ 		threadLoader.join();
+ 		threadParser.join();
+ 		
+ 		after = System.currentTimeMillis();
+ 		time = (after - before);
+ 		         
+ 		System.out.println("time " + time);
+ 		 
+    }
+}

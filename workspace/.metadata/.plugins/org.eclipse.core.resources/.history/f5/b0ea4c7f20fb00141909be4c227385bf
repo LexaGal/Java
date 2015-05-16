@@ -1,0 +1,100 @@
+package HTTPFile.Classes;
+
+import java.util.Date;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+
+public class AccessLog
+{
+
+	final String timestampPattern = "[dd/MMM/yyyy:HH:mm:ss Z]";
+	
+    public Host getLocalHost()
+    {
+        return localHost;
+    }
+
+    public void setLocalHost(String localHost)
+    {
+        this.localHost =  new Host(localHost);
+    }
+
+    public Date getTimestamp()
+    {
+        return this.timestamp;
+    }
+
+    public void setTimestamp(String timestamp)
+    {
+    	 this.timestamp = new SimpleDateFormat(timestampPattern).parse(timestamp, new ParsePosition(timestamp.indexOf("[")));
+    }  
+
+    public String getRequest()
+    {
+        return this.request;
+    }
+
+    public void setRequest(String request)
+    {
+        this.request = request;
+    }
+
+    public int getReplyCode()
+    {
+        return this.replyCode;
+    }
+
+    public void setReplyCode(int replyCode)
+    {
+        this.replyCode = replyCode;
+    }
+
+    public int getReplyBytes()
+    {
+        return this.replyBytes;
+    }
+
+    public void setReplyBytes(int replyBytes)
+    {
+        this.replyBytes = replyBytes;
+    }
+
+    private Host localHost;
+    private Date timestamp;
+    private String request;
+    private int replyCode;
+    private int replyBytes;
+
+    public AccessLog(String str)
+    {
+    	try
+    	{
+	        String[] buffer = str.split("\"");
+	        this.setRequest(buffer[1]);
+	        String[] secongPart = buffer[0].split("- ");
+	        this.setLocalHost(secongPart[0]);
+	        this.setTimestamp(secongPart[2]);
+	        secongPart = buffer[2].split(" ");
+	        this.setReplyCode(Integer.parseInt(secongPart[1]));
+	        this.setReplyBytes(Integer.parseInt(secongPart[2]));
+    	}
+    	catch(NumberFormatException e)
+    	{     		
+    		setReplyBytes(0);
+    	}
+    	
+    	catch(Exception e)
+    	{ 
+        }
+    }
+    
+	public String toString()
+    {
+    	return String.format("\n__________________________\n Host: " + getLocalHost() +
+    		"\n TimeStamp: " + getTimestamp() + "\n Request: " + getRequest() + 
+    			"\n ReplyCode: " + getReplyCode() + "\n Bytes: " + getReplyBytes());
+
+    }
+
+}

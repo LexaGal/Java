@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Move type &apos;HTTPFile.AccessLog&apos; in &apos;HTTPFile.HTTPInfo.java&apos; to new file&#x0D;&#x0A;- Original project: &apos;HTTP&apos;&#x0D;&#x0A;- Original element: &apos;HTTPFile.AccessLog&apos;" description="Move type &apos;AccessLog&apos; to new file" field="false" final="true" flags="786438" id="org.eclipse.jdt.ui.move.inner" input="/src&lt;HTTPFile{HTTPInfo.java[AccessLog" mandatory="false" possible="false" stamp="1425706837662" version="1.0"/>
+</session>

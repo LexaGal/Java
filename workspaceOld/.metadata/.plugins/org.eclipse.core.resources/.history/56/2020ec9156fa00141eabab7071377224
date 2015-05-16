@@ -1,0 +1,20 @@
+package HTTPFile.Classes;
+
+public class AgrsData
+{
+	 public AgrsData(String DataBasePath, String StarterPosition, String RowsAmount, String OutBasePath, String ReportPath, String ReportNumber)
+	 {
+		 this.DataBasePath = DataBasePath;
+	     this.StarterPosition = StarterPosition;
+	     this.RowsAmount = RowsAmount;
+	     this.OutBasePath = OutBasePath;
+	     this.ReportPath = ReportPath;
+	     this.ReportNumber = ReportNumber;
+	 }
+     public String DataBasePath;
+     public String StarterPosition;
+     public String RowsAmount;
+     public String OutBasePath;
+     public String ReportPath;
+     public String ReportNumber;
+}

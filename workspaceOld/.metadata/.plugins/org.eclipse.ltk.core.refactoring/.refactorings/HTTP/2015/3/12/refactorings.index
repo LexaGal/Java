@@ -1,0 +1,11 @@
+1426867337553	Move type 'ILogFileProcessor' to new file
+1426867540777	Move type 'IParserForLog' to new file
+1426867590487	Move type 'IReader' to new file
+1426867649138	Move type 'IWriter' to new file
+1426868868548	Move type 'ParserForLog' to new file
+1426868940424	Move type 'LogFileProcessor' to new file
+1426870075375	Delete element
+1426870988259	Rename resource 'TextFile'
+1426871150823	Move compilation units
+1426871200936	Move file
+1426871278011	Move compilation units

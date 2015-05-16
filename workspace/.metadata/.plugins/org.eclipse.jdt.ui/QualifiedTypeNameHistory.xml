@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="HTTPFile.Classes.ReportData"/>
+<fullyQualifiedTypeName name="HTTPFile.Interfaces.IWriter"/>
+<fullyQualifiedTypeName name="java.util.concurrent.BlockingQueue"/>
+<fullyQualifiedTypeName name="java.util.concurrent.ArrayBlockingQueue"/>
+<fullyQualifiedTypeName name="HTTPFile.Classes.AccessLog"/>
+<fullyQualifiedTypeName name="javax.swing.text.html.parser.Parser"/>
+<fullyQualifiedTypeName name="Threads.Parser"/>
+<fullyQualifiedTypeName name="Threads.Loader"/>
+<fullyQualifiedTypeName name="java.lang.String"/>
+<fullyQualifiedTypeName name="java.lang.Exception"/>
+<fullyQualifiedTypeName name="java.lang.System"/>
+</qualifiedTypeNameHistroy>

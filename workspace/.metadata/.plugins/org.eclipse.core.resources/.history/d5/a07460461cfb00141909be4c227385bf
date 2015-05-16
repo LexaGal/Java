@@ -1,0 +1,80 @@
+package Threads;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.concurrent.BlockingQueue;
+
+import HTTPFile.Classes.AccessLog;
+import HTTPFile.Classes.ParserForLog;
+import HTTPFile.Interfaces.IParserForLog;
+
+public class Parser implements Runnable
+{
+	private IParserForLog parser;
+	private String path;
+	private int count = 0;
+	private int nLines;
+	BufferedWriter out;
+	BlockingQueue<String> queueLines;
+	BlockingQueue<AccessLog> queueLogs;
+	
+	public Parser(String p, int n, BlockingQueue<String> lines, BlockingQueue<AccessLog> logs) throws IOException
+	{
+		path = p;
+		nLines = n;
+		out = new BufferedWriter(new FileWriter(path));
+		queueLines = lines;
+		queueLogs = logs;
+		parser = new ParserForLog();
+	}
+				
+	@Override
+	public void run()
+	{
+		try {
+				String line;		
+				while (count <= nLines) 
+				{
+					if (queueLines.isEmpty())
+					{
+						continue;
+					}
+					
+					line = queueLines.take();
+					try
+					{
+						AccessLog log = parser.getAccessLog(line);
+						
+						if (log == null)
+						{
+							continue;
+						}
+						
+						queueLogs.put(log);
+												
+						String logLine = log.toString();
+						
+						writeLine(logLine);
+					}
+					catch (Exception ex)
+					{
+						System.out.println(ex.getMessage());
+					}
+					
+					count++;
+				}
+										
+			} 
+			catch (InterruptedException exception)
+			{
+				exception.printStackTrace();
+			}
+	
+	}
+	
+	public void writeLine(String line) throws IOException
+	{
+		System.out.append(' ' + String.valueOf(count + 1) + ") " + line + '\n');
+	}
+}
